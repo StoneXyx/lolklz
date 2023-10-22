@@ -1,0 +1,29 @@
+local player = game.Players.LocalPlayer
+local storage = game.ReplicatedStorage.AcsModTnf.Events
+local dmg, id = storage.Damage, storage.AcessId:InvokeServer(player.UserId).."-"..player.UserId
+local tool, data = player.Character:FindFirstChildOfClass("Tool")
+
+local cam = workspace.CurrentCamera
+
+if tool then
+    data = require(tool:FindFirstChild("ACS_Settings"))
+else
+    return
+end
+
+local mod = {
+    DamageMod = math.huge,
+    minDamageMod = 0
+}
+
+function ta(hum)
+    dmg:InvokeServer(tool, hum, 1, 1, data, mod, nil, nil, id)
+end
+
+for i,v in next, game.Players:GetPlayers() do
+    if v ~= player and v.Character and v.Character:FindFirstChild("Humanoid").Health > 0 then
+        local hum = v.Character and v.Character:FindFirstChild("Humanoid")
+        task.spawn(ta, hum)
+        task.wait(.1)
+    end
+end 
